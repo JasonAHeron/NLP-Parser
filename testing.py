@@ -179,6 +179,26 @@ def write(infile, recall=True):
                 for narrative in parse_narratives_sum(argument):
                     process(narrative, 3).to_csv(f, header=False)
 
+def process_ra(filename):
+    with open(filename) as csvfile:
+        reader = csv.reader(csvfile)
+        accumulator = []
+        for line in reader:
+            accumulator.append(line)
+        print process(accumulator[1:], 2)
+
+def process_sa(filename):
+    with open(filename) as csvfile:
+        reader = csv.reader(csvfile)
+        accumulator = []
+        for line in reader:
+            accumulator.append(line)
+        print process(accumulator[1:], 3)
+
+
+process_ra('ra.csv')
+process_sa('sa.csv')
+
 os.remove('out.csv')
 pd.DataFrame(columns=['A', 'AA', 'AE', 'AO', 'E', 'EA', 'EE', 'EO',  'O', 'OA', 'OE', 'OO', 'argument', 'narrative']).to_csv('out.csv')
 write('ra.csv')
