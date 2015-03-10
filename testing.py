@@ -3,6 +3,10 @@ import csv
 import pandas as pd
 import os
 
+#  this is all one huge hack, please forgive me
+
+
+
 def parse_narratives_recall(list):
     nar0 = []
     nar1 = []
@@ -38,12 +42,24 @@ def parse_narratives_recall(list):
     return [nar0, nar1, nar2, nar3, nar4, nar5, nar6, nar7, nar8, nar9]
 
 
-def parse_narratives_sum(filename):
+def parse_narratives_sum(list):
     nar0 = []
     nar1 = []
     nar2 = []
     nar3 = []
     nar4 = []
+    for line in list:
+        if line[1] == "0":
+            nar0.append(line)
+        elif line[1] == "1":
+            nar1.append(line)
+        elif line[1] == "2":
+            nar2.append(line)
+        elif line[1] == "3":
+            nar3.append(line)
+        elif line[1] == "4":
+            nar4.append(line)
+    return [nar0, nar1, nar2, nar3, nar4]
 
 def parse(filename):
     arg1 = []
@@ -152,32 +168,21 @@ def process(argument, label_location):
     return df
 
 
+def write(infile, recall=True):
+    with open('out.csv', 'a') as f:
+        arguments = parse(infile)
+        for argument in arguments:
+            if recall:
+                for narrative in parse_narratives_recall(argument):
+                    process(narrative, 2).to_csv(f, header=False)
+            else:
+                for narrative in parse_narratives_sum(argument):
+                    process(narrative, 3).to_csv(f, header=False)
+
 os.remove('out.csv')
 pd.DataFrame(columns=['A', 'AA', 'AE', 'AO', 'E', 'EA', 'EE', 'EO',  'O', 'OA', 'OE', 'OO', 'argument', 'narrative']).to_csv('out.csv')
-
-with open('out.csv', 'a') as f:
-    arguments = parse('ra.csv')
-    for argument in arguments:
-        for narrative in parse_narratives_recall(argument):
-            process(narrative, 2).to_csv(f, header=False)
-
-
-
-
-'''
-B = parse('sa.csv')
-print B
-
-
-
-
-    for item in A:
-        process(item, 2).to_csv(f, header=False)
-
-    #for item in B:
-    #    process(item, 3).to_csv(f, header=False)
-
-'''
+write('ra.csv')
+write('sa.csv', False)
 
 
 
