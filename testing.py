@@ -87,8 +87,28 @@ def parse(filename):
     return [arg1, arg2, arg3, arg4, arg5]
 
 
+def improved_parse(filename):
+    result = []
+    with open(filename, 'rU') as csvfile:
+        stories = set()
+        reader = csv.reader(csvfile)
+        reader_list = [x for x in reader]
+        for line in reader_list:
+            stories.add(line[2])
 
-def process(argument, label_location):
+        for i in range(len(stories)):
+            for line in reader_list:
+                if line[2] == str(i+1):
+                    try:
+                        x = result[i]
+                        result[i].append(line)
+                    except IndexError:
+                        result.insert(i, [line])
+
+    return result
+
+
+def process(argument, label_location, narrative_offset = 0):
     '''
     :param argument: list of lines from CSV file
     :param label_location: location of label in CSV headers
@@ -123,7 +143,7 @@ def process(argument, label_location):
     for index, item in enumerate(argument):
             if index+1 == total:
                 arg_name = item[0]
-                narrative = item[1]
+                narrative = item[1+narrative_offset]
                 if item[label_location] == "Action":
                     actions += 1
                 elif item[label_location] == "Evaluation":
@@ -197,16 +217,31 @@ def process_sa(filename):
                 accumulator.append(line)
             process(accumulator[1:], 3).to_csv(f, header=False)
 
-os.remove('out1.csv')
+
+try:
+    os.remove('out1.csv')
+except:
+    print "caught"
+
+
 pd.DataFrame(columns=['A', 'AA', 'AE', 'AO', 'E', 'EA', 'EE', 'EO',  'O', 'OA', 'OE', 'OO', 'argument', 'narrative']).to_csv('out1.csv')
 process_ra('ra.csv')
 process_sa('sa.csv')
 
-os.remove('out.csv')
+try:
+    os.remove('out.csv')
+except:
+    print "caught"
 pd.DataFrame(columns=['A', 'AA', 'AE', 'AO', 'E', 'EA', 'EE', 'EO',  'O', 'OA', 'OE', 'OO', 'argument', 'narrative']).to_csv('out.csv')
 write('ra.csv')
 write('sa.csv', False)
 
 
-
-
+try:
+    os.remove('out2.csv')
+except:
+    print "caught"
+pd.DataFrame(columns=['A', 'AA', 'AE', 'AO', 'E', 'EA', 'EE', 'EO',  'O', 'OA', 'OE', 'OO', 'argument', 'narrative']).to_csv('out2.csv')
+with open('out2.csv', 'a') as f:
+    for item in improved_parse('blog.csv'):
+        process(item, 8, 1).to_csv(f, header=False)
