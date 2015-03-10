@@ -180,22 +180,25 @@ def write(infile, recall=True):
                     process(narrative, 3).to_csv(f, header=False)
 
 def process_ra(filename):
-    with open(filename) as csvfile:
-        reader = csv.reader(csvfile)
-        accumulator = []
-        for line in reader:
-            accumulator.append(line)
-        print process(accumulator[1:], 2)
+    with open('out1.csv', 'a') as f:
+        with open(filename) as csvfile:
+            reader = csv.reader(csvfile)
+            accumulator = []
+            for line in reader:
+                accumulator.append(line)
+            process(accumulator[1:], 2).to_csv(f, header=False)
 
 def process_sa(filename):
-    with open(filename) as csvfile:
-        reader = csv.reader(csvfile)
-        accumulator = []
-        for line in reader:
-            accumulator.append(line)
-        print process(accumulator[1:], 3)
+    with open('out1.csv', 'a') as f:
+        with open(filename) as csvfile:
+            reader = csv.reader(csvfile)
+            accumulator = []
+            for line in reader:
+                accumulator.append(line)
+            process(accumulator[1:], 3).to_csv(f, header=False)
 
-
+os.remove('out1.csv')
+pd.DataFrame(columns=['A', 'AA', 'AE', 'AO', 'E', 'EA', 'EE', 'EO',  'O', 'OA', 'OE', 'OO', 'argument', 'narrative']).to_csv('out1.csv')
 process_ra('ra.csv')
 process_sa('sa.csv')
 
