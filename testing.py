@@ -245,3 +245,15 @@ pd.DataFrame(columns=['A', 'AA', 'AE', 'AO', 'E', 'EA', 'EE', 'EO',  'O', 'OA', 
 with open('out2.csv', 'a') as f:
     for item in improved_parse('blog.csv'):
         process(item, 8, 1).to_csv(f, header=False)
+
+
+try:
+    os.remove('out3.csv')
+except:
+    print "caught"
+pd.DataFrame(columns=['A', 'AA', 'AE', 'AO', 'E', 'EA', 'EE', 'EO',  'O', 'OA', 'OE', 'OO', 'argument', 'narrative']).to_csv('out3.csv')
+with open('blog.csv', 'rU') as csvfile:
+    with open('out3.csv', 'a') as f:
+        acc = [x for x in csv.reader(csvfile)]
+        process(acc, 8,1).to_csv(f, header=False)
+
