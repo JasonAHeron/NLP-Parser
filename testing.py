@@ -3,6 +3,47 @@ import csv
 import pandas as pd
 import os
 
+def parse_narratives_recall(list):
+    nar0 = []
+    nar1 = []
+    nar2 = []
+    nar3 = []
+    nar4 = []
+    nar5 = []
+    nar6 = []
+    nar7 = []
+    nar8 = []
+    nar9 = []
+    for line in list:
+        if line[1] == "0":
+            nar0.append(line)
+        elif line[1] == "1":
+            nar1.append(line)
+        elif line[1] == "2":
+            nar2.append(line)
+        elif line[1] == "3":
+            nar3.append(line)
+        elif line[1] == "4":
+            nar4.append(line)
+        elif line[1] == "5":
+            nar5.append(line)
+        elif line[1] == "6":
+            nar6.append(line)
+        elif line[1] == "7":
+            nar7.append(line)
+        elif line[1] == "8":
+            nar8.append(line)
+        elif line[1] == "9":
+            nar9.append(line)
+    return [nar0, nar1, nar2, nar3, nar4, nar5, nar6, nar7, nar8, nar9]
+
+
+def parse_narratives_sum(filename):
+    nar0 = []
+    nar1 = []
+    nar2 = []
+    nar3 = []
+    nar4 = []
 
 def parse(filename):
     arg1 = []
@@ -46,6 +87,7 @@ def process(argument, label_location):
 
     total = len(argument)
     arg_name = None
+    narrative = None
 
     actions = 0
     action_action = 0
@@ -65,6 +107,7 @@ def process(argument, label_location):
     for index, item in enumerate(argument):
             if index+1 == total:
                 arg_name = item[0]
+                narrative = item[1]
                 if item[label_location] == "Action":
                     actions += 1
                 elif item[label_location] == "Evaluation":
@@ -101,7 +144,7 @@ def process(argument, label_location):
                     orientation_orientation += 1
 
 
-    d = {"argument": arg_name, "A": actions/total, "AO": action_orientation/total, "AA": action_action/total,
+    d = {"narrative": narrative, "argument": arg_name, "A": actions/total, "AO": action_orientation/total, "AA": action_action/total,
                 "AE": action_evaluation/total, "E": evaluations/total, "EO": evaluation_orientation/total,
                 "EE": evaluation_evaluation/total, "EA": evaluation_action/total, "O": orientations/total,
                 "OO": orientation_orientation/total, "OE": orientation_evaluation/total, "OA": orientation_action/total}
@@ -109,22 +152,32 @@ def process(argument, label_location):
     return df
 
 
-A = parse('ra.csv')
-print A
+os.remove('out.csv')
+pd.DataFrame(columns=['A', 'AA', 'AE', 'AO', 'E', 'EA', 'EE', 'EO',  'O', 'OA', 'OE', 'OO', 'argument', 'narrative']).to_csv('out.csv')
+
+with open('out.csv', 'a') as f:
+    arguments = parse('ra.csv')
+    for argument in arguments:
+        for narrative in parse_narratives_recall(argument):
+            process(narrative, 2).to_csv(f, header=False)
+
+
+
+
+'''
 B = parse('sa.csv')
 print B
 
-os.remove('out.csv')
-pd.DataFrame(columns=['A', 'AA', 'AE', 'AO', 'E', 'EA', 'EE', 'EO',  'O', 'OA', 'OE', 'OO', 'argument']).to_csv('out.csv')
 
-with open('out.csv', 'a') as f:
+
+
     for item in A:
         process(item, 2).to_csv(f, header=False)
 
     #for item in B:
     #    process(item, 3).to_csv(f, header=False)
 
-
+'''
 
 
 
